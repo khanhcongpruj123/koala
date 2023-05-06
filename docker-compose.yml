@@ -1,0 +1,44 @@
+version: '3.8'
+
+services:
+  # traefik:
+  #   image: traefik:v2.10
+  #   volumes:
+  #     - ./infras/traefik/traefik.yaml:/etc/traefik/traefik.yml
+  #     - /var/run/docker.sock:/var/run/docker.sock
+      
+  #   ports:
+  #     - "443:443"
+  #     - "8080:8080"
+  #     - "4000:4000"
+  ory-proxy:
+    build:
+      context: ./infras/ory
+    ports:
+      - "4000:4000"
+  app:
+    build:
+      context: .
+    command: ./wait-for-it.sh db:5432 && yarn prisma migrate deploy
+    labels:
+      - traefik.http.routers.app.rule=PathPrefix(`/koala/api/v1`)
+      - traefik.http.middlewares.koala-stripprefix.stripprefix.prefixes=/koala/api/v1
+      - traefik.http.routers.app.middlewares=koala-stripprefix
+      - traefik.http.routers.app.entrypoints=koala
+    depends_on:
+      - db
+  db:
+    image: postgres
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+    environment:
+      - POSTGRES_USER=koala
+      - POSTGRES_PASSWORD=koala
+      - POSTGRES_DB=koala
+    ports:
+      - 5432:5432
+    volumes:
+      - ./infras/db/var/lib/postgresql/data:/var/lib/postgresql/data

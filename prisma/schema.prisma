@@ -1,0 +1,62 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model UserProfile {
+  id          String  @id @default(uuid())
+  userId      String  @unique
+  name        String  @unique
+  avatarUrl   String
+  description String?
+
+  level     Int @default(1)
+  coin      Int @default(0)
+  usedLands Int @default(0)
+  exp       Int @default(0)
+
+  seed Seed[]
+
+  version Int @default(0)
+
+  @@index([userId, name, version])
+  @@map("tbl_user_profiles")
+}
+
+model UserProfileLevel {
+  level       Int @id
+  maxLands    Int @default(0)
+  requiredExp Int
+
+  @@map("tbl_user_profile_levels")
+}
+
+model SeedSample {
+  code              String  @id
+  name              String  @unique
+  originalPrice     Int
+  matureTime        Int
+  maturePrice       Int
+  requiredUserLevel Int
+  thumbnailUrl      String?
+  seeds             Seed[]
+
+  @@map("tbl_seed_samples")
+}
+
+model Seed {
+  id       String      @id @default(uuid())
+  owner    UserProfile @relation(fields: [ownerId], references: [id])
+  ownerId  String
+  sample   SeedSample  @relation(fields: [sampleId], references: [code])
+  sampleId String
+
+  @@map("tbl_seeds")
+}
