@@ -140,14 +140,3 @@ providers:
   docker: {}
   file:
     filename: /etc/traefik/traefik.yml
-
-http:
-  middlewares:
-    check-auth:
-      plugin:
-        oryauth:
-          host: "https://amazing-montalcini-i5d0dw4grd.projects.oryapis.com"
-          headers:
-            User: "TiccTech-User"
-            Tenant: "TiccTech-Tenant"
-            Permissions: "Permissions"

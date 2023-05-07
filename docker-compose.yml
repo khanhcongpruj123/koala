@@ -1,20 +1,14 @@
 version: '3.8'
 
 services:
-  # traefik:
-  #   image: traefik:v2.10
-  #   volumes:
-  #     - ./infras/traefik/traefik.yaml:/etc/traefik/traefik.yml
-  #     - /var/run/docker.sock:/var/run/docker.sock
-      
-  #   ports:
-  #     - "443:443"
-  #     - "8080:8080"
-  #     - "4000:4000"
-  ory-proxy:
-    build:
-      context: ./infras/ory
+  traefik:
+    image: traefik:v2.10
+    volumes:
+      - ./infras/traefik/traefik.yaml:/etc/traefik/traefik.yml
+      - /var/run/docker.sock:/var/run/docker.sock
     ports:
+      - "443:443"
+      - "8080:8080"
       - "4000:4000"
   app:
     build:
@@ -30,7 +24,7 @@ services:
   db:
     image: postgres
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres || exit 1"]
+      test: ["CMD-SHELL", "pg_isready -U koala || exit 1"]
       interval: 10s
       timeout: 5s
       retries: 3
