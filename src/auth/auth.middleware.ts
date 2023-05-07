@@ -28,6 +28,7 @@ export class AuthGuard implements CanActivate {
         const request = context.switchToHttp().getRequest();
         OryClient.toSession({
           cookie: request.headers.cookie,
+          xSessionToken: request.headers['x-session-token'],
         })
           .then((res: any) => {
             request['authSession'] = res.data;
