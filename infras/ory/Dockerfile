@@ -1,10 +1,8 @@
-FROM ubuntu:18.04
+FROM node:14.21.2
 
-COPY ./install.sh ./
+RUN yarn global add @ory/cli
 
-RUN apt update
-RUN apt install curl -y
-RUN chmod +x ./install.sh
-RUN ./install.sh
+USER root
 
-ENTRYPOINT [ "ory", "proxy", "--port", "8080", "http://app:3000", "https://amazing-montalcini-i5d0dw4grd.projects.oryapis.com", "<", "echo 'n'"]
+# ENTRYPOINT [ "ory", "proxy", "--port", "8080", "http://app:3000"]
+ENTRYPOINT [ "sleep 1000000" ]

@@ -1,5 +1,7 @@
-FROM node:14.21.2-alpine as build
+FROM node:18.10.0 AS build
+
 WORKDIR /koala
+
 COPY ./src ./src
 COPY ./prisma ./prisma
 COPY ./package.json ./package.json
@@ -8,16 +10,18 @@ COPY ./tsconfig.json ./tsconfig.json
 RUN yarn
 RUN yarn build
 
-FROM node:14.21.3 as release
+FROM node:18.10.0 AS release
+
 WORKDIR /koala
+
 COPY --from=build /koala/package.json ./package.json
 COPY --from=build /koala/dist ./dist
 COPY --from=build /koala/.env ./.env
 COPY --from=build /koala/node_modules ./node_modules
-COPY ./wait-for-it.sh ./wait-for-it.sh
+COPY ./public ./public
 
-RUN source ./.env
+RUN . ./.env
 
-EXPOSE 4000
+EXPOSE 3000
 
 ENTRYPOINT [ "yarn", "start:prod" ]

@@ -8,7 +8,7 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { SeedService } from './seed.service';
-import { AuthGuard, Public } from 'src/auth/auth.middleware';
+import { Public } from 'src/auth/auth.middleware';
 import { Request } from 'express';
 import { UserProfileService } from 'src/profiles/profile.service';
 

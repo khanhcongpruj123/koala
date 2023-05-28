@@ -29,7 +29,7 @@ entryPoints:
     address: :443
   
   koala:
-    address: :4000
+    address: :8000
 
 ################################################################
 # Traefik logs configuration
@@ -129,14 +129,20 @@ api:
 # Docker configuration backend
 ################################################################
 
-
-experimental:
-  plugins:
-    oryauth:
-      moduleName: github.com/credibil/pluginauth
-      version: v0.0.28
-
 providers:
   docker: {}
   file:
     filename: /etc/traefik/traefik.yml
+
+http:
+  services:
+    ory-proxy-service:
+      loadBalancer:
+        servers:
+          - url: http://host.docker.internal:4000/.ory
+  routers:
+    ory-proxy-router:
+      entryPoints:
+      - koala
+      service: ory-proxy-service
+      rule: PathPrefix(`/.ory`)

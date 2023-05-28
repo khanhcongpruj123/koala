@@ -9,11 +9,10 @@ services:
     ports:
       - "443:443"
       - "8080:8080"
-      - "4000:4000"
+      - "8000:8000"
   app:
     build:
       context: .
-    command: ./wait-for-it.sh db:5432 && yarn prisma migrate deploy
     labels:
       - traefik.http.routers.app.rule=PathPrefix(`/koala/api/v1`)
       - traefik.http.middlewares.koala-stripprefix.stripprefix.prefixes=/koala/api/v1
@@ -21,6 +20,11 @@ services:
       - traefik.http.routers.app.entrypoints=koala
     depends_on:
       - db
+  ory-proxy:
+    build:
+      context: ./infras/ory
+    environment:
+      - ORY_PROJECT_SLUG=amazing-montalcini-i5d0dw4grd
   db:
     image: postgres
     healthcheck:
