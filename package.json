@@ -24,7 +24,6 @@
     "@nestjs/common": "^9.0.0",
     "@nestjs/core": "^9.0.0",
     "@nestjs/platform-express": "^9.0.0",
-    "@ory/cli": "^0.2.2",
     "@ory/client": "^1.1.25",
     "@prisma/client": "4.13.0",
     "axios": "^1.4.0",

@@ -1,37 +1,10 @@
 version: '3.8'
 
+networks:
+  koala: {}
 services:
-  traefik:
-    image: traefik:v2.10
-    volumes:
-      - ./infras/traefik/traefik.yaml:/etc/traefik/traefik.yml
-      - /var/run/docker.sock:/var/run/docker.sock
-    ports:
-      - "443:443"
-      - "8080:8080"
-      - "8000:8000"
-  app:
-    build:
-      context: .
-    labels:
-      - traefik.http.routers.app.rule=PathPrefix(`/koala/api/v1`)
-      - traefik.http.middlewares.koala-stripprefix.stripprefix.prefixes=/koala/api/v1
-      - traefik.http.routers.app.middlewares=koala-stripprefix
-      - traefik.http.routers.app.entrypoints=koala
-    depends_on:
-      - db
-  ory-proxy:
-    build:
-      context: ./infras/ory
-    environment:
-      - ORY_PROJECT_SLUG=amazing-montalcini-i5d0dw4grd
   db:
-    image: postgres
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U koala || exit 1"]
-      interval: 10s
-      timeout: 5s
-      retries: 3
+    image: postgres:15.3
     environment:
       - POSTGRES_USER=koala
       - POSTGRES_PASSWORD=koala
@@ -40,3 +13,5 @@ services:
       - 5432:5432
     volumes:
       - ./infras/db/var/lib/postgresql/data:/var/lib/postgresql/data
+    networks:
+      - koala
