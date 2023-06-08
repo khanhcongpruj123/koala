@@ -133,16 +133,3 @@ providers:
   docker: {}
   file:
     filename: /etc/traefik/traefik.yml
-
-http:
-  services:
-    ory-proxy-service:
-      loadBalancer:
-        servers:
-          - url: http://host.docker.internal:4000/.ory
-  routers:
-    ory-proxy-router:
-      entryPoints:
-      - koala
-      service: ory-proxy-service
-      rule: PathPrefix(`/.ory`)
